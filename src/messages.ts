@@ -19,11 +19,11 @@ export type RoomCreatedResponse = {
 // Request
 export const JOIN_ROOM_REQUEST = 'joinRoomRequest';
 
-export const JoinRoomRequestSchema = yup.object().defined().shape({
+export const joinRoomRequestSchema = yup.object().defined().shape({
   roomId: yup.string().defined().uuid(),
 });
 
-export type JoinRoomRequest = yup.InferType<typeof JoinRoomRequestSchema>;
+export type JoinRoomRequest = yup.InferType<typeof joinRoomRequestSchema>;
 
 // Response
 export const JOIN_ROOM_RESPONSE = 'joinRoomResponse';
@@ -60,19 +60,19 @@ export const ROOM_INFO_UPDATED_NOTIFICATION = 'roomInfoUpdatedNotification';
 
 // Request
 export const CHOOSE_PIECE_REQUEST = 'choosePieceRequest';
-export const ChoosePieceRequestSchema = yup.object().defined().shape({
+export const choosePieceRequestSchema = yup.object().defined().shape({
   name: yup.string().required(),
 });
-export type ChoosePieceRequest = yup.InferType<typeof ChoosePieceRequestSchema>;
+export type ChoosePieceRequest = yup.InferType<typeof choosePieceRequestSchema>;
 
 /****************** Choose part **********************/
 
 // Request
 export const CHOOSE_PART_REQUEST = 'choosePartRequest';
-export const ChoosePartRequestSchema = yup.object().defined().shape({
+export const choosePartRequestSchema = yup.object().defined().shape({
   name: yup.string().required(),
 });
-export type ChoosePartRequest = yup.InferType<typeof ChoosePartRequestSchema>;
+export type ChoosePartRequest = yup.InferType<typeof choosePartRequestSchema>;
 
 /****************** Miscellaneous *****************/
 

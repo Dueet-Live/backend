@@ -5,7 +5,7 @@ import {
   CREATE_ROOM_RESPONSE,
   joinRoomFailures,
   JoinRoomRequest,
-  JoinRoomRequestSchema,
+  joinRoomRequestSchema,
   JoinRoomResponse,
   JOIN_ROOM_REQUEST,
   JOIN_ROOM_RESPONSE,
@@ -43,7 +43,7 @@ export class Server {
   private handleJoinRoom(socket: io.Socket, message: unknown): void {
     let joinRoomRequest: JoinRoomRequest;
     try {
-      joinRoomRequest = JoinRoomRequestSchema.validateSync(message);
+      joinRoomRequest = joinRoomRequestSchema.validateSync(message);
     } catch (error: unknown) {
       return handleMessageValidationError(error, socket);
     }

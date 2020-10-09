@@ -1,9 +1,9 @@
 import io from 'socket.io';
 import {
   ChoosePartRequest,
-  ChoosePartRequestSchema,
+  choosePartRequestSchema,
   ChoosePieceRequest,
-  ChoosePieceRequestSchema,
+  choosePieceRequestSchema,
   CHOOSE_PART_REQUEST,
   CHOOSE_PIECE_REQUEST,
 } from './messages';
@@ -48,7 +48,7 @@ export class Player {
   private handleChoosePiece(message: unknown): void {
     let choosePieceRequest: ChoosePieceRequest;
     try {
-      choosePieceRequest = ChoosePieceRequestSchema.validateSync(message);
+      choosePieceRequest = choosePieceRequestSchema.validateSync(message);
     } catch (error: unknown) {
       return handleMessageValidationError(error, this.socket);
     }
@@ -59,7 +59,7 @@ export class Player {
   private handleChoosePart(message: unknown): void {
     let choosePartRequest: ChoosePartRequest;
     try {
-      choosePartRequest = ChoosePartRequestSchema.validateSync(message);
+      choosePartRequest = choosePartRequestSchema.validateSync(message);
     } catch (error: unknown) {
       return handleMessageValidationError(error, this.socket);
     }
