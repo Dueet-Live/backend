@@ -1,4 +1,5 @@
 import io from 'socket.io';
+import { ROOM_INFO_UPDATED_NOTIFICATION } from './messages';
 import { Player, PlayerInfo } from './player';
 import { getRandomIntInclusive } from './utils/random';
 
@@ -10,8 +11,8 @@ export type RoomInfo = {
 
 export class Room {
   readonly id: string;
-  readonly piece?: string;
-  readonly players: { [id: number]: Player } = {};
+  private piece?: string;
+  private players: { [id: number]: Player } = {};
 
   private static readonly PLAYER_ID_LOWER_BOUND = 0;
   private static readonly PLAYER_ID_UPPER_BOUND = 9;
@@ -22,9 +23,26 @@ export class Room {
 
   createPlayer(socket: io.Socket): Player {
     const playerId = this.generateNextPlayerId();
-    const player = new Player(socket, playerId);
+    const player = new Player(socket, this, playerId);
     this.players[playerId] = player;
     return player;
+  }
+
+  choosePiece(piece: string): void {
+    // TODO: validation
+    this.piece = piece;
+    this.broadcastInfoUpdate();
+  }
+
+  didChoosePart(): void {
+    this.broadcastInfoUpdate();
+  }
+
+  private broadcastInfoUpdate(): void {
+    const info = this.getInfo();
+    Object.values(this.players).forEach((player) =>
+      player.send(ROOM_INFO_UPDATED_NOTIFICATION, info),
+    );
   }
 
   private generateNextPlayerId(): number {

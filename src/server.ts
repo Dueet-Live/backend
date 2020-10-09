@@ -1,6 +1,5 @@
 import io from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
-import { ValidationError } from 'yup';
 import {
   CREATE_ROOM_REQUEST,
   CREATE_ROOM_RESPONSE,
@@ -10,13 +9,10 @@ import {
   JoinRoomResponse,
   JOIN_ROOM_REQUEST,
   JOIN_ROOM_RESPONSE,
-  MalformedMessageResponse,
-  MALFORMED_MESSAGE_RESPONSE,
   RoomCreatedResponse,
-  UnknownErrorResponse,
-  UNKNOWN_MESSAGE_RESPONSE,
 } from './messages';
 import { Room } from './room';
+import { handleMessageValidationError } from './utils/error';
 
 export class Server {
   private ioServer: io.Server;
@@ -49,17 +45,7 @@ export class Server {
     try {
       joinRoomRequest = JoinRoomRequestSchema.validateSync(message);
     } catch (error: unknown) {
-      if (error instanceof ValidationError) {
-        const response: MalformedMessageResponse = { message: error.message };
-        socket.emit(MALFORMED_MESSAGE_RESPONSE, response);
-        return;
-      } else {
-        const response: UnknownErrorResponse = {
-          error: (error as Error).message,
-        };
-        socket.emit(UNKNOWN_MESSAGE_RESPONSE, response);
-        return;
-      }
+      return handleMessageValidationError(error, socket);
     }
 
     const room = this.rooms[joinRoomRequest.roomId];
