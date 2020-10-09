@@ -4,6 +4,8 @@ import {
   choosePieceRequestSchema,
   CHOOSE_PART_REQUEST,
   CHOOSE_PIECE_REQUEST,
+  readyRequestSchema,
+  READY_REQUEST,
 } from './messages';
 import { Room } from './room';
 import { validateRequest } from './utils/validation';
@@ -21,9 +23,9 @@ export class Player {
   private socket: io.Socket;
 
   readonly id: number;
-  private ready: boolean;
-  private assignedPart?: string;
-  private room: Room;
+  ready: boolean;
+  assignedPart?: string;
+  room: Room;
 
   constructor(socket: io.Socket, room: Room, id: number) {
     this.id = id;
@@ -37,6 +39,9 @@ export class Player {
     this.socket.on(CHOOSE_PART_REQUEST, (message: unknown) =>
       this.handleChoosePart(message),
     );
+    this.socket.on(READY_REQUEST, (message: unknown) => {
+      this.handleReady(message);
+    });
   }
 
   send(messageType: string, message: unknown): void {
@@ -68,6 +73,24 @@ export class Player {
 
     this.assignedPart = choosePartRequest.name;
     this.room.didChoosePart();
+  }
+
+  private handleReady(message: unknown): void {
+    const readyRequest = validateRequest(
+      readyRequestSchema,
+      message,
+      this.socket,
+    );
+    if (readyRequest === null) {
+      return;
+    }
+
+    if (this.ready === readyRequest.ready) {
+      return;
+    }
+    this.ready = readyRequest.ready;
+    // TODO: validation
+    this.room.didReady();
   }
 
   getInfo(): PlayerInfo {

@@ -74,6 +74,21 @@ export const choosePartRequestSchema = yup.object().defined().shape({
 });
 export type ChoosePartRequest = yup.InferType<typeof choosePartRequestSchema>;
 
+/****************** Ready *****************/
+
+export const READY_REQUEST = 'readyRequest';
+export const readyRequestSchema = yup.object().defined().shape({
+  ready: yup.boolean().required(),
+});
+export type ReadyRequest = yup.InferType<typeof readyRequestSchema>;
+
+/****************** Start game *****************/
+
+export const START_GAME_NOTIFICATION = 'startGameNotification';
+export type StartGameNotification = {
+  inSeconds: number;
+};
+
 /****************** Miscellaneous *****************/
 
 export const MALFORMED_MESSAGE_RESPONSE = 'malformedMessageResponse';

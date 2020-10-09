@@ -1,5 +1,9 @@
 import io from 'socket.io';
-import { ROOM_INFO_UPDATED_NOTIFICATION } from './messages';
+import {
+  ROOM_INFO_UPDATED_NOTIFICATION,
+  StartGameNotification,
+  START_GAME_NOTIFICATION,
+} from './messages';
 import { Player, PlayerInfo } from './player';
 import { getRandomIntInclusive } from './utils/random';
 
@@ -11,8 +15,11 @@ export type RoomInfo = {
 
 export class Room {
   readonly id: string;
-  private piece?: string;
-  private players: { [id: number]: Player } = {};
+  piece?: string;
+  players: { [id: number]: Player } = {};
+  private get allPlayers(): Player[] {
+    return Object.values(this.players);
+  }
 
   private static readonly PLAYER_ID_LOWER_BOUND = 0;
   private static readonly PLAYER_ID_UPPER_BOUND = 9;
@@ -35,12 +42,26 @@ export class Room {
   }
 
   didChoosePart(): void {
+    // TODO: validation
     this.broadcastInfoUpdate();
+  }
+
+  didReady(): void {
+    // TODO: validation
+    this.broadcastInfoUpdate();
+
+    // If all players are ready, start game
+    if (this.allPlayers.every((player) => player.ready)) {
+      const startMessage: StartGameNotification = { inSeconds: 3 };
+      this.allPlayers.forEach((player) =>
+        player.send(START_GAME_NOTIFICATION, startMessage),
+      );
+    }
   }
 
   private broadcastInfoUpdate(): void {
     const info = this.getInfo();
-    Object.values(this.players).forEach((player) =>
+    this.allPlayers.forEach((player) =>
       player.send(ROOM_INFO_UPDATED_NOTIFICATION, info),
     );
   }
@@ -61,7 +82,7 @@ export class Room {
   getInfo(): RoomInfo {
     return {
       ...this,
-      players: Object.values(this.players).map((p) => p.getInfo()),
+      players: this.allPlayers.map((p) => p.getInfo()),
     };
   }
 }
