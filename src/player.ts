@@ -1,14 +1,12 @@
 import io from 'socket.io';
 import {
-  ChoosePartRequest,
   choosePartRequestSchema,
-  ChoosePieceRequest,
   choosePieceRequestSchema,
   CHOOSE_PART_REQUEST,
   CHOOSE_PIECE_REQUEST,
 } from './messages';
 import { Room } from './room';
-import { handleMessageValidationError } from './utils/error';
+import { validateRequest } from './utils/validation';
 
 export type PiecePart = string;
 
@@ -46,22 +44,26 @@ export class Player {
   }
 
   private handleChoosePiece(message: unknown): void {
-    let choosePieceRequest: ChoosePieceRequest;
-    try {
-      choosePieceRequest = choosePieceRequestSchema.validateSync(message);
-    } catch (error: unknown) {
-      return handleMessageValidationError(error, this.socket);
+    const choosePieceRequest = validateRequest(
+      choosePieceRequestSchema,
+      message,
+      this.socket,
+    );
+    if (choosePieceRequest === null) {
+      return;
     }
 
     this.room.choosePiece(choosePieceRequest.name);
   }
 
   private handleChoosePart(message: unknown): void {
-    let choosePartRequest: ChoosePartRequest;
-    try {
-      choosePartRequest = choosePartRequestSchema.validateSync(message);
-    } catch (error: unknown) {
-      return handleMessageValidationError(error, this.socket);
+    const choosePartRequest = validateRequest(
+      choosePartRequestSchema,
+      message,
+      this.socket,
+    );
+    if (choosePartRequest === null) {
+      return;
     }
 
     this.assignedPart = choosePartRequest.name;

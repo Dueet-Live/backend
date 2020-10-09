@@ -4,7 +4,6 @@ import {
   CREATE_ROOM_REQUEST,
   CREATE_ROOM_RESPONSE,
   joinRoomFailures,
-  JoinRoomRequest,
   joinRoomRequestSchema,
   JoinRoomResponse,
   JOIN_ROOM_REQUEST,
@@ -12,7 +11,7 @@ import {
   RoomCreatedResponse,
 } from './messages';
 import { Room } from './room';
-import { handleMessageValidationError } from './utils/error';
+import { validateRequest } from './utils/validation';
 
 export class Server {
   private ioServer: io.Server;
@@ -41,11 +40,13 @@ export class Server {
   }
 
   private handleJoinRoom(socket: io.Socket, message: unknown): void {
-    let joinRoomRequest: JoinRoomRequest;
-    try {
-      joinRoomRequest = joinRoomRequestSchema.validateSync(message);
-    } catch (error: unknown) {
-      return handleMessageValidationError(error, socket);
+    const joinRoomRequest = validateRequest(
+      joinRoomRequestSchema,
+      message,
+      socket,
+    );
+    if (joinRoomRequest === null) {
+      return;
     }
 
     const room = this.rooms[joinRoomRequest.roomId];
