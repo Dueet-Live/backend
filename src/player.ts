@@ -3,26 +3,28 @@ import io from 'socket.io';
 export type PiecePart = string;
 
 export interface PlayerInfo {
-  playerId: number;
+  id: number;
   assignedPart?: string;
   ready: boolean;
 }
 
+// Player represents a player in a room
 export class Player {
-  socket: io.Socket;
+  private socket: io.Socket;
 
-  playerId: number;
-  ready: boolean;
-  assignedPart?: string;
+  readonly id: number;
+  readonly ready: boolean;
+  readonly assignedPart?: string;
 
-  constructor(socket: io.Socket, playerId: number) {
+  constructor(socket: io.Socket, id: number) {
+    this.id = id;
     this.socket = socket;
-
-    this.playerId = playerId;
     this.ready = false;
   }
 
   getInfo(): PlayerInfo {
-    return this;
+    return {
+      ...this,
+    };
   }
 }
