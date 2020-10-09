@@ -4,6 +4,7 @@ import {
   choosePieceRequestSchema,
   CHOOSE_PART_REQUEST,
   CHOOSE_PIECE_REQUEST,
+  NOTE_PLAYED,
   readyRequestSchema,
   READY_REQUEST,
 } from './messages';
@@ -41,6 +42,9 @@ export class Player {
     );
     this.socket.on(READY_REQUEST, (message: unknown) => {
       this.handleReady(message);
+    });
+    this.socket.on(NOTE_PLAYED, (message: unknown) => {
+      this.handleNotePlayed(message);
     });
   }
 
@@ -91,6 +95,11 @@ export class Player {
     this.ready = readyRequest.ready;
     // TODO: validation
     this.room.didReady();
+  }
+
+  private handleNotePlayed(message: unknown): void {
+    // TODO: will validation affect performance?
+    this.room.notePlayed(this, message);
   }
 
   getInfo(): PlayerInfo {

@@ -1,5 +1,6 @@
 import io from 'socket.io';
 import {
+  NOTE_PLAYED,
   ROOM_INFO_UPDATED_NOTIFICATION,
   StartGameNotification,
   START_GAME_NOTIFICATION,
@@ -57,6 +58,14 @@ export class Room {
         player.send(START_GAME_NOTIFICATION, startMessage),
       );
     }
+  }
+
+  notePlayed(playingPlayer: Player, message: unknown): void {
+    this.allPlayers.forEach((player) => {
+      if (player.id !== playingPlayer.id) {
+        player.send(NOTE_PLAYED, message);
+      }
+    });
   }
 
   private broadcastInfoUpdate(): void {

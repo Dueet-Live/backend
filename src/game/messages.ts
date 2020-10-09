@@ -89,6 +89,22 @@ export type StartGameNotification = {
   inSeconds: number;
 };
 
+/****************** Note played *****************/
+
+export const NOTE_PLAYED = 'notePlayed';
+export type NotePlayEvent = 'keyup' | 'keydown';
+export const notePlayedSchema = yup
+  .object()
+  .defined()
+  .shape({
+    note: yup.number().defined(),
+    event: yup
+      .mixed()
+      .defined()
+      .oneOf(['keyup', 'keydown'] as const),
+  });
+export type NotePlayedRequest = yup.InferType<typeof notePlayedSchema>;
+
 /****************** Miscellaneous *****************/
 
 export const MALFORMED_MESSAGE_RESPONSE = 'malformedMessageResponse';
