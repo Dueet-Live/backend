@@ -10,7 +10,7 @@ export type CreateRoomRequest = {};
 
 export const CREATE_ROOM_RESPONSE = 'createRoomResponse';
 export type RoomCreatedResponse = {
-  roomId: string;
+  roomInfo: RoomInfo;
   playerId: number;
 };
 

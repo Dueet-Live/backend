@@ -34,7 +34,7 @@ export class Server {
     this.rooms[room.id] = room;
     const player = room.createPlayer(socket);
     const response: RoomCreatedResponse = {
-      roomId: room.id,
+      roomInfo: room.getInfo(),
       playerId: player.id,
     };
     socket.emit(CREATE_ROOM_RESPONSE, response);
