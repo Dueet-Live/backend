@@ -58,7 +58,7 @@ export class Player {
       return;
     }
 
-    this.room.choosePiece(choosePieceRequest.name);
+    this.room.choosePiece(choosePieceRequest.id);
   }
 
   private handleChoosePart(message: unknown): void {
@@ -71,7 +71,7 @@ export class Player {
       return;
     }
 
-    this.assignedPart = choosePartRequest.name;
+    this.assignedPart = choosePartRequest.id;
     this.room.didChoosePart();
   }
 

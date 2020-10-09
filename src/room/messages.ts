@@ -61,7 +61,7 @@ export const ROOM_INFO_UPDATED_NOTIFICATION = 'roomInfoUpdatedNotification';
 // Request
 export const CHOOSE_PIECE_REQUEST = 'choosePieceRequest';
 export const choosePieceRequestSchema = yup.object().defined().shape({
-  name: yup.string().required(),
+  id: yup.string().required(),
 });
 export type ChoosePieceRequest = yup.InferType<typeof choosePieceRequestSchema>;
 
@@ -70,7 +70,7 @@ export type ChoosePieceRequest = yup.InferType<typeof choosePieceRequestSchema>;
 // Request
 export const CHOOSE_PART_REQUEST = 'choosePartRequest';
 export const choosePartRequestSchema = yup.object().defined().shape({
-  name: yup.string().required(),
+  id: yup.string().required(),
 });
 export type ChoosePartRequest = yup.InferType<typeof choosePartRequestSchema>;
 
