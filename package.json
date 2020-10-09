@@ -7,8 +7,8 @@
     "serve": "node dist/index.js",
     "typecheck": "tsc --incremental --noEmit",
     "check": "npm run typecheck && npm run lint",
-    "lint": "prettier src; eslint src",
-    "fix": "prettier src --write; eslint src --fix",
+    "lint": "prettier --check src; eslint src",
+    "fix": "prettier --write src; eslint src --fix",
     "dev": "nodemon --watch src --ext ts --exec \"npm run build && npm run serve\""
   },
   "dependencies": {
@@ -33,7 +33,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-push": "npm check"
+      "pre-push": "npm run check"
     }
   }
 }
