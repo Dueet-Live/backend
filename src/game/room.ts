@@ -90,8 +90,9 @@ export class Room {
 
   getInfo(): RoomInfo {
     return {
-      ...this,
+      id: this.id,
       players: this.allPlayers.map((p) => p.getInfo()),
+      piece: this.piece,
     };
   }
 }

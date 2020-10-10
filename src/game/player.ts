@@ -104,8 +104,9 @@ export class Player {
 
   getInfo(): PlayerInfo {
     return {
-      ...this,
+      id: this.id,
       assignedPart: this.assignedPart,
+      ready: this.ready,
     };
   }
 }
