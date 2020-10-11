@@ -36,18 +36,18 @@ export class Room {
     return player;
   }
 
-  choosePiece(piece: string): void {
+  playerDidChoosePiece(piece: string): void {
     // TODO: validation
     this.piece = piece;
     this.broadcastInfoUpdate();
   }
 
-  didChoosePart(): void {
+  playerDidChoosePart(): void {
     // TODO: validation
     this.broadcastInfoUpdate();
   }
 
-  didReady(): void {
+  playerDidReady(): void {
     // TODO: validation
     this.broadcastInfoUpdate();
 
@@ -58,6 +58,11 @@ export class Room {
         player.send(START_GAME_NOTIFICATION, startMessage),
       );
     }
+  }
+
+  playerDidDisconnect(player: Player): void {
+    delete this.players[player.id];
+    this.broadcastInfoUpdate();
   }
 
   notePlayed(playingPlayer: Player, message: unknown): void {

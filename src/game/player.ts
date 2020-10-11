@@ -46,6 +46,9 @@ export class Player {
     this.socket.on(NOTE_PLAYED, (message: unknown) => {
       this.handleNotePlayed(message);
     });
+    this.socket.on('disconnect', (reason: string) => {
+      this.handleDisconnect(reason);
+    });
   }
 
   send(messageType: string, message: unknown): void {
@@ -62,7 +65,7 @@ export class Player {
       return;
     }
 
-    this.room.choosePiece(choosePieceRequest.id);
+    this.room.playerDidChoosePiece(choosePieceRequest.id);
   }
 
   private handleChoosePart(message: unknown): void {
@@ -76,7 +79,7 @@ export class Player {
     }
 
     this.assignedPart = choosePartRequest.id;
-    this.room.didChoosePart();
+    this.room.playerDidChoosePart();
   }
 
   private handleReady(message: unknown): void {
@@ -94,12 +97,18 @@ export class Player {
     }
     this.ready = readyRequest.ready;
     // TODO: validation
-    this.room.didReady();
+    this.room.playerDidReady();
   }
 
   private handleNotePlayed(message: unknown): void {
     // TODO: will validation affect performance?
     this.room.notePlayed(this, message);
+  }
+
+  private handleDisconnect(reason: string): void {
+    // TODO: need to distinguish between different reasons?
+    console.log(reason);
+    this.room.playerDidDisconnect(this);
   }
 
   getInfo(): PlayerInfo {
