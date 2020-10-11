@@ -59,12 +59,6 @@ export class Server {
       return;
     }
 
-    const player = room.createPlayer(socket);
-    const joinRoomResponse: JoinRoomResponse = {
-      success: true,
-      playerId: player.id,
-      roomInfo: room.getInfo(),
-    };
-    socket.emit(JOIN_ROOM_RESPONSE, joinRoomResponse);
+    room.joinRoom(socket);
   }
 }

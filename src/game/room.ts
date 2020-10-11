@@ -1,5 +1,7 @@
 import io from 'socket.io';
 import {
+  JoinRoomResponse,
+  JOIN_ROOM_RESPONSE,
   NOTE_PLAYED,
   ROOM_INFO_UPDATED_NOTIFICATION,
   StartGameNotification,
@@ -34,6 +36,20 @@ export class Room {
     const player = new Player(socket, this, playerId);
     this.players[playerId] = player;
     return player;
+  }
+
+  joinRoom(socket: io.Socket): void {
+    const player = this.createPlayer(socket);
+    const info = this.getInfo();
+    // Send a response to the joining player
+    const joinRoomResponse: JoinRoomResponse = {
+      success: true,
+      playerId: player.id,
+      roomInfo: info,
+    };
+    socket.emit(JOIN_ROOM_RESPONSE, joinRoomResponse);
+    // Also notify the existing players
+    this.broadcastInfoUpdate(player.id);
   }
 
   playerDidChoosePiece(piece: string): void {
@@ -73,11 +89,13 @@ export class Room {
     });
   }
 
-  private broadcastInfoUpdate(): void {
+  private broadcastInfoUpdate(...except: number[]): void {
     const info = this.getInfo();
-    this.allPlayers.forEach((player) =>
-      player.send(ROOM_INFO_UPDATED_NOTIFICATION, info),
-    );
+    this.allPlayers.forEach((player) => {
+      if (!except.includes(player.id)) {
+        player.send(ROOM_INFO_UPDATED_NOTIFICATION, info);
+      }
+    });
   }
 
   private generateNextPlayerId(): number {
