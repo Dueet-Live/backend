@@ -4,7 +4,7 @@ import { Server } from './server';
 
 const port = process.env.PORT || 3000;
 const key = process.env.KEY || './key.pem';
-const cert = process.env.KEY || './cert.pem';
+const cert = process.env.CERT || './cert.pem';
 
 const httpsServer = https.createServer({
   key: fs.readFileSync(key),
