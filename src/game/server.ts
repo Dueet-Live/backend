@@ -1,4 +1,3 @@
-import https from 'https';
 import io from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
 import {
@@ -16,12 +15,10 @@ import { validateRequest } from './utils/validation';
 
 export class Server {
   private ioServer: io.Server;
-  private httpsServer: https.Server;
   private rooms: { [roomId: string]: Room } = {};
 
-  constructor(httpsServer: https.Server) {
-    this.ioServer = io(httpsServer);
-    this.httpsServer = httpsServer;
+  constructor(ioServer: io.Server) {
+    this.ioServer = ioServer;
 
     this.ioServer.on('connect', (socket) => {
       socket.on(CREATE_ROOM_REQUEST, () => this.handleCreateRoom(socket));
@@ -29,10 +26,6 @@ export class Server {
         this.handleJoinRoom(socket, message),
       );
     });
-  }
-
-  start(port: string | number): void {
-    this.httpsServer.listen(port);
   }
 
   private handleCreateRoom(socket: io.Socket): void {

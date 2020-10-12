@@ -12,6 +12,7 @@
     "dev": "nodemon --watch src --ext ts --exec \"npm run build && npm run serve\""
   },
   "dependencies": {
+    "dotenv": "^8.2.0",
     "socket.io": "^2.3.0",
     "uuid": "^8.3.1",
     "yup": "^0.29.3"
