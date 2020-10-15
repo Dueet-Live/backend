@@ -25,7 +25,7 @@ genresRouter.get('/:name', async (req, res) => {
 
   const repo = getRepository(Genre);
   const genre = await repo.findOne({
-    where: { name: genreName },
+    where: { name: genreName.toLowerCase() },
     relations: ['songs'],
   });
   if (!genre) {

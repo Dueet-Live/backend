@@ -43,7 +43,7 @@ const createGenre = async (name: string): Promise<Genre> => {
 
 (async () => {
   const connection = await createConnection();
-  const classicalGenre = await createGenre('Classical');
+  const classicalGenre = await createGenre('classical');
   await saveSong(
     'Dance of The Sugar Plum Fairy',
     'danceOfTheSugarPlumFairy',
