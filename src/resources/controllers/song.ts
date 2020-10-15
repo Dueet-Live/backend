@@ -1,10 +1,10 @@
-import express, { Request, Response } from 'express';
+import { Request, Response, Router } from 'express';
 import { getRepository } from 'typeorm';
 import * as yup from 'yup';
 import { Song } from '../../db/entities/song';
 import { validateHttpRequest } from '../utils/validateHttpRequest';
 
-export const songsRouter = express.Router();
+const songsRouter = Router();
 
 songsRouter.get('/', async (req: Request, res: Response) => {
   const repository = getRepository(Song);
@@ -29,3 +29,5 @@ songsRouter.get('/:id/content', async (req, res) => {
   }
   return res.status(200).json({ ...song, content: song.content?.content });
 });
+
+export default songsRouter;

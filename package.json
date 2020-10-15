@@ -9,7 +9,7 @@
     "check": "npm run typecheck && npm run lint",
     "lint": "prettier --check src; eslint src",
     "fix": "prettier --write src; eslint src --fix",
-    "dev": "npm run clean && nodemon --watch src --ext ts --exec \"npm run build && npm run serve\"",
+    "dev": "nodemon --watch src --ext ts --exec \"npm run clean && npm run build && npm run serve\"",
     "seed": "node dist/db/seeds/seed.js"
   },
   "dependencies": {
