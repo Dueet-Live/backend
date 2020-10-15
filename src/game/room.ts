@@ -1,4 +1,5 @@
 import io from 'socket.io';
+import { getRandomIntInclusive } from '../utils/random';
 import {
   JoinRoomResponse,
   JOIN_ROOM_RESPONSE,
@@ -8,7 +9,6 @@ import {
   START_GAME_NOTIFICATION,
 } from './messages';
 import { Player, PlayerInfo } from './player';
-import { getRandomIntInclusive } from './utils/random';
 
 export type RoomInfo = {
   id: string;

@@ -11,9 +11,9 @@ import {
   RoomCreatedResponse,
 } from './messages';
 import { Room } from './room';
-import { validateRequest } from './utils/validation';
+import { validateSocketRequest } from './utils/validateSocketRequest';
 
-export class Server {
+export class GameServer {
   private ioServer: io.Server;
   private rooms: { [roomId: string]: Room } = {};
 
@@ -40,7 +40,7 @@ export class Server {
   }
 
   private handleJoinRoom(socket: io.Socket, message: unknown): void {
-    const joinRoomRequest = validateRequest(
+    const joinRoomRequest = validateSocketRequest(
       joinRoomRequestSchema,
       message,
       socket,

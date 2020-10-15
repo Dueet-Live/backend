@@ -9,7 +9,7 @@ import {
   READY_REQUEST,
 } from './messages';
 import { Room } from './room';
-import { validateRequest } from './utils/validation';
+import { validateSocketRequest } from './utils/validateSocketRequest';
 
 export type PiecePart = string;
 
@@ -56,7 +56,7 @@ export class Player {
   }
 
   private handleChoosePiece(message: unknown): void {
-    const choosePieceRequest = validateRequest(
+    const choosePieceRequest = validateSocketRequest(
       choosePieceRequestSchema,
       message,
       this.socket,
@@ -69,7 +69,7 @@ export class Player {
   }
 
   private handleChoosePart(message: unknown): void {
-    const choosePartRequest = validateRequest(
+    const choosePartRequest = validateSocketRequest(
       choosePartRequestSchema,
       message,
       this.socket,
@@ -83,7 +83,7 @@ export class Player {
   }
 
   private handleReady(message: unknown): void {
-    const readyRequest = validateRequest(
+    const readyRequest = validateSocketRequest(
       readyRequestSchema,
       message,
       this.socket,
