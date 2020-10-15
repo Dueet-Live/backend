@@ -9,6 +9,9 @@ module.exports = {
   url: process.env.DB_URL,
   synchronize: !isProd,
   logging: true,
-  entities: ['dist/resources/entity/**/*.js'],
+  entities: ['dist/db/entities/**/*.js'],
   migrations: ['dist/db/migrations/**/*.js'],
+  cli: {
+    migrationsDir: 'src/db/migrations/',
+  },
 };

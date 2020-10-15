@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import { getRepository } from 'typeorm';
 import * as yup from 'yup';
-import { Song } from '../entity/song';
+import { Song } from '../../db/entities/song';
 import { validateHttpRequest } from '../utils/validateHttpRequest';
 
 export const songsRouter = express.Router();
