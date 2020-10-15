@@ -24,7 +24,7 @@ export class Song {
   @OneToOne(() => SongContent, (content) => content.song)
   content?: SongContent;
 
-  @ManyToOne(() => Genre, (genre) => genre.songs)
+  @ManyToOne(() => Genre, (genre) => genre.songs, { eager: true })
   genre?: Genre;
 
   @Column()
