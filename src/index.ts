@@ -6,20 +6,20 @@ import 'reflect-metadata';
 import io from 'socket.io';
 import { createConnection } from 'typeorm';
 import { GameServer } from './game/server';
+import { logger } from './logger/logger';
 import { app as resourceServer } from './resources/server';
 
 (async () => {
   // Load config
-  const { error } = dotenv.config();
-  if (error) {
-    throw error;
-  }
+  dotenv.config();
+  logger.info('Loaded environment variables');
 
   // Connect to database
   try {
     await createConnection();
+    logger.info('Connected to database');
   } catch (err) {
-    console.log(`Failed to connect to database: ${err}`);
+    logger.error('Failed to connect to database', { error: err });
     return;
   }
 
@@ -48,6 +48,6 @@ import { app as resourceServer } from './resources/server';
   };
 
   server.http.listen(port, () => {
-    console.log(`Server started on port ${port}`);
+    logger.info('Server started', { port });
   });
 })();
