@@ -1,7 +1,6 @@
 import appRoot from 'app-root-path';
 import winston, { format, transports } from 'winston';
 
-// https://github.com/winstonjs/winston/issues/1537
 export const logger = winston.createLogger({
   level: 'info',
   format: format.combine(
@@ -20,12 +19,10 @@ export const logger = winston.createLogger({
     new transports.Console({
       level: 'debug',
       format: format.combine(
-        format.colorize(),
         format.timestamp(),
+        format.colorize(),
         format.prettyPrint(),
-        format.printf(
-          (info) => `[${info.timestamp}] ${info.level}: ${info.message}`,
-        ),
+        format.simple(),
       ),
     }),
   ],

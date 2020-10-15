@@ -12,14 +12,14 @@ import { app as resourceServer } from './resources/server';
 (async () => {
   // Load config
   dotenv.config();
-  logger.info('Loaded environment variables');
+  logger.info('loaded environment variables');
 
   // Connect to database
   try {
     await createConnection();
-    logger.info('Connected to database');
+    logger.info('connected to database');
   } catch (err) {
-    logger.error('Failed to connect to database', { error: err });
+    logger.error('failed to connect to database', { error: err });
     return;
   }
 
@@ -44,10 +44,10 @@ import { app as resourceServer } from './resources/server';
 
   const server = {
     http: httpServer,
-    gameServer: new GameServer(io(httpServer)),
+    gameServer: new GameServer(io(httpServer), logger),
   };
 
   server.http.listen(port, () => {
-    logger.info('Server started', { port });
+    logger.info('server started', { port });
   });
 })();

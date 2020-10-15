@@ -1,4 +1,5 @@
 import io from 'socket.io';
+import { Logger } from 'winston';
 import {
   choosePartRequestSchema,
   choosePieceRequestSchema,
@@ -27,12 +28,14 @@ export class Player {
   ready: boolean;
   assignedPart?: string;
   room: Room;
+  private logger: Logger;
 
-  constructor(socket: io.Socket, room: Room, id: number) {
+  constructor(socket: io.Socket, room: Room, id: number, logger: Logger) {
     this.id = id;
     this.socket = socket;
     this.ready = false;
     this.room = room;
+    this.logger = logger.child({ playerId: id });
 
     this.socket.on(CHOOSE_PIECE_REQUEST, (message: unknown) =>
       this.handleChoosePiece(message),
@@ -64,6 +67,7 @@ export class Player {
     if (choosePieceRequest === null) {
       return;
     }
+    this.logger.info('player chose piece', { id: choosePieceRequest.id });
 
     this.room.playerDidChoosePiece(choosePieceRequest.id);
   }
@@ -77,6 +81,7 @@ export class Player {
     if (choosePartRequest === null) {
       return;
     }
+    this.logger.info('player chose part', { id: choosePartRequest.id });
 
     this.assignedPart = choosePartRequest.id;
     this.room.playerDidChoosePart();
@@ -91,6 +96,9 @@ export class Player {
     if (readyRequest === null) {
       return;
     }
+    this.logger.info('player ready status changed', {
+      ready: readyRequest.ready,
+    });
 
     if (this.ready === readyRequest.ready) {
       return;
@@ -102,12 +110,13 @@ export class Player {
 
   private handleNotePlayed(message: unknown): void {
     // TODO: will validation affect performance?
+    this.logger.info('player played note', { message });
     this.room.notePlayed(this, message);
   }
 
   private handleDisconnect(reason: string): void {
     // TODO: need to distinguish between different reasons?
-    console.log(reason);
+    this.logger.debug('player disconnected', { reason });
     this.room.playerDidDisconnect(this);
   }
 
