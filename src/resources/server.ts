@@ -1,3 +1,4 @@
+import cors from 'cors';
 import express, { NextFunction, Request, Response } from 'express';
 import morgan from 'morgan';
 import { logger } from '../logger/logger';
@@ -16,6 +17,7 @@ if (process.env.NODE_ENV !== 'production') {
   app.use(morgan('dev', { stream }));
 }
 
+app.use(cors());
 app.use('/songs', songsRouter);
 app.use('/genres', genresRouter);
 
