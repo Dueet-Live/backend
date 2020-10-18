@@ -61,7 +61,7 @@ export const ROOM_INFO_UPDATED_NOTIFICATION = 'roomInfoUpdatedNotification';
 // Request
 export const CHOOSE_PIECE_REQUEST = 'choosePieceRequest';
 export const choosePieceRequestSchema = yup.object().defined().shape({
-  id: yup.string().required(),
+  id: yup.number().required(),
 });
 export type ChoosePieceRequest = yup.InferType<typeof choosePieceRequestSchema>;
 

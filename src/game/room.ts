@@ -13,13 +13,13 @@ import { Player, PlayerInfo } from './player';
 
 export type RoomInfo = {
   id: string;
-  piece?: string;
+  piece?: number;
   players: PlayerInfo[];
 };
 
 export class Room {
   readonly id: string;
-  piece?: string;
+  piece?: number;
   players: { [id: number]: Player } = {};
   private get allPlayers(): Player[] {
     return Object.values(this.players);
@@ -57,7 +57,7 @@ export class Room {
     this.broadcastInfoUpdate(player.id);
   }
 
-  playerDidChoosePiece(piece: string): void {
+  playerDidChoosePiece(piece: number): void {
     // TODO: validation
     this.piece = piece;
     this.broadcastInfoUpdate();
