@@ -91,6 +91,8 @@
         "number": 0
       },
       "name": "Piano\u0000",
+      "regularStartNote": 72,
+      "smallStartNote": 72,
       "notes": [
         {
           "duration": 0.23645833333333321,
@@ -2125,6 +2127,8 @@
         "number": 0
       },
       "name": "Piano\u0000",
+      "regularStartNote": 48,
+      "smallStartNote": 50,
       "notes": [
         {
           "duration": 0.47395833333333337,
