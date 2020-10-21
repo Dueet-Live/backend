@@ -1,5 +1,6 @@
 import io from 'socket.io';
 import { Logger } from 'winston';
+import { getRandomIntInclusive } from '../utils/random';
 import {
   CREATE_ROOM_REQUEST,
   CREATE_ROOM_RESPONSE,
@@ -17,6 +18,8 @@ export class GameServer {
   private ioServer: io.Server;
   private rooms: { [roomId: string]: Room } = {};
   private logger: Logger;
+
+  private static readonly ROOM_ID_GEN_MAX_TRIES: number = 10000;
 
   constructor(ioServer: io.Server, logger: Logger) {
     this.ioServer = ioServer;
@@ -42,7 +45,7 @@ export class GameServer {
   }
 
   private handleCreateRoom(socket: io.Socket): void {
-    const roomId = this.generateRoomId();
+    const roomId = this.generateRoomId(GameServer.ROOM_ID_GEN_MAX_TRIES);
     if (roomId === null) {
       // TODO: handle
       this.logger.error("ran out of room ids, can't create room", {
@@ -50,9 +53,17 @@ export class GameServer {
       });
       return;
     }
+
     const room = new Room(this, roomId, this.logger);
     this.rooms[room.id] = room;
     const player = room.createPlayer(socket);
+    if (player === null) {
+      this.logger.error(
+        'failed to create the first player of a room (this should not happen)',
+      );
+      return;
+    }
+
     const response: RoomCreatedResponse = {
       roomInfo: room.getInfo(),
       playerId: player.id,
@@ -60,9 +71,10 @@ export class GameServer {
     socket.emit(CREATE_ROOM_RESPONSE, response);
   }
 
-  private generateRoomId(): string | null {
-    for (let i = 1; i <= 999999; i++) {
-      const candidateId = i.toString().padStart(6, '0');
+  private generateRoomId(maxTries: number): string | null {
+    for (let i = 0; i < maxTries; i++) {
+      const randomNum = getRandomIntInclusive(1, 999999);
+      const candidateId = randomNum.toString().padStart(6, '0');
       if (!this.rooms[candidateId]) {
         return candidateId;
       }

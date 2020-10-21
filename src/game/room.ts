@@ -32,6 +32,7 @@ export class Room {
   private static readonly PLAYER_ID_LOWER_BOUND = 0;
   private static readonly PLAYER_ID_UPPER_BOUND = 9;
   private static readonly MAX_NUM_PLAYERS = 2;
+  private static readonly PLAYER_ID_GEN_MAX_TRIES = 20;
 
   constructor(server: GameServer, id: string, logger: Logger) {
     this.id = id;
@@ -39,9 +40,15 @@ export class Room {
     this.logger = logger.child({ roomId: id });
   }
 
-  createPlayer(socket: io.Socket): Player {
+  createPlayer(socket: io.Socket): Player | null {
     this.logger.info('create room', { socketId: socket.id });
-    const playerId = this.generateNextPlayerId();
+    const playerId = this.generateNextPlayerId(Room.PLAYER_ID_GEN_MAX_TRIES);
+    if (playerId === null) {
+      this.logger.error("ran out of player ids, can't create player", {
+        socketId: socket.id,
+      });
+      return null;
+    }
     const player = new Player(socket, this, playerId, this.logger);
     this.players[playerId] = player;
     return player;
@@ -62,6 +69,14 @@ export class Room {
 
     // Create the player and send response
     const player = this.createPlayer(socket);
+    if (player === null) {
+      // Should not happen, because we have already checked whether the room is full
+      this.logger.error('ran out of player id (this should not happen)', {
+        socketId: socket.id,
+      });
+      return;
+    }
+
     const info = this.getInfo();
     // Send a response to the joining player
     const joinRoomResponse: JoinRoomResponse = {
@@ -128,8 +143,8 @@ export class Room {
     });
   }
 
-  private generateNextPlayerId(): number {
-    while (true) {
+  private generateNextPlayerId(maxTries: number): number | null {
+    for (let i = 0; i < maxTries; i++) {
       const newId = getRandomIntInclusive(
         Room.PLAYER_ID_LOWER_BOUND,
         Room.PLAYER_ID_UPPER_BOUND,
@@ -138,6 +153,7 @@ export class Room {
         return newId;
       }
     }
+    return null;
   }
 
   getInfo(): RoomInfo {
