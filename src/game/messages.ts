@@ -19,9 +19,12 @@ export type RoomCreatedResponse = {
 // Request
 export const JOIN_ROOM_REQUEST = 'joinRoomRequest';
 
-export const joinRoomRequestSchema = yup.object().defined().shape({
-  roomId: yup.string().defined().uuid(),
-});
+export const joinRoomRequestSchema = yup
+  .object()
+  .defined()
+  .shape({
+    roomId: yup.string().defined().length(6),
+  });
 
 export type JoinRoomRequest = yup.InferType<typeof joinRoomRequestSchema>;
 

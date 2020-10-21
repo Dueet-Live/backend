@@ -1,5 +1,4 @@
 import io from 'socket.io';
-import { v4 as uuidv4 } from 'uuid';
 import { Logger } from 'winston';
 import {
   CREATE_ROOM_REQUEST,
@@ -38,7 +37,15 @@ export class GameServer {
   }
 
   private handleCreateRoom(socket: io.Socket): void {
-    const room = new Room(uuidv4(), this.logger);
+    const roomId = this.generateRoomId();
+    if (roomId === null) {
+      // TODO: handle
+      this.logger.error("ran out of room ids, can't create room", {
+        socketId: socket.id,
+      });
+      return;
+    }
+    const room = new Room(roomId, this.logger);
     this.rooms[room.id] = room;
     const player = room.createPlayer(socket);
     const response: RoomCreatedResponse = {
@@ -46,6 +53,16 @@ export class GameServer {
       playerId: player.id,
     };
     socket.emit(CREATE_ROOM_RESPONSE, response);
+  }
+
+  private generateRoomId(): string | null {
+    for (let i = 1; i <= 999999; i++) {
+      const candidateId = i.toString().padStart(6, '0');
+      if (!this.rooms[candidateId]) {
+        return candidateId;
+      }
+    }
+    return null;
   }
 
   private handleJoinRoom(socket: io.Socket, message: unknown): void {
