@@ -42,11 +42,12 @@ export class GameServer {
   }
 
   closeRoom(room: Room): void {
-    this.logger.info('close room', { roomId: room.id });
+    this.logger.info('room closed', { roomId: room.id });
     delete this.rooms[room.id];
   }
 
   private handleCreateRoom(socket: io.Socket): void {
+    this.logger.info('received create room request', { socketId: socket.id });
     const roomId = this.generateRoomId(GameServer.ROOM_ID_GEN_MAX_TRIES);
     if (roomId === null) {
       // TODO: handle
@@ -58,11 +59,13 @@ export class GameServer {
 
     const room = new Room(this, roomId, this.logger);
     this.rooms[room.id] = room;
+    this.logger.info('created room', { roomId: room.id });
     const player = room.createPlayer(socket);
     if (player === null) {
       this.logger.error(
         'failed to create the first player of a room (this should not happen)',
       );
+      delete this.rooms[room.id];
       return;
     }
 

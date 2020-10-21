@@ -29,6 +29,9 @@ export class Room {
   }
   private logger: Logger;
 
+  private closeRoomTimeoutId: NodeJS.Timeout | null = null;
+  private static readonly CLOSE_ROOM_TIMEOUT_MILLISECONDS = 30 * 60 * 1000; // 30 minutes
+
   private static readonly PLAYER_ID_LOWER_BOUND = 0;
   private static readonly PLAYER_ID_UPPER_BOUND = 9;
   private static readonly MAX_NUM_PLAYERS = 2;
@@ -41,7 +44,6 @@ export class Room {
   }
 
   createPlayer(socket: io.Socket): Player | null {
-    this.logger.info('create room', { socketId: socket.id });
     const playerId = this.generateNextPlayerId(Room.PLAYER_ID_GEN_MAX_TRIES);
     if (playerId === null) {
       this.logger.error("ran out of player ids, can't create player", {
@@ -51,11 +53,22 @@ export class Room {
     }
     const player = new Player(socket, this, playerId, this.logger);
     this.players[playerId] = player;
+    this.logger.info('created player', {
+      socketId: socket.id,
+      playerId: player.id,
+    });
     return player;
   }
 
   joinRoom(socket: io.Socket): void {
     this.logger.info('join room', { socketId: socket.id });
+
+    // Cancel the timeout to close the room
+    if (this.closeRoomTimeoutId !== null) {
+      this.logger.info('room closure cancelled');
+      clearTimeout(this.closeRoomTimeoutId);
+      this.closeRoomTimeoutId = null;
+    }
 
     // If room is full, reject request
     if (this.allPlayers.length >= Room.MAX_NUM_PLAYERS) {
@@ -117,8 +130,14 @@ export class Room {
   playerDidDisconnect(player: Player): void {
     delete this.players[player.id];
     if (this.allPlayers.length === 0) {
-      // Last player, close room
-      this.server.closeRoom(this);
+      // Last player, set a timeout to close the room if no players join in time
+      this.logger.info('last player left, room closure scheduled', {
+        closeRoomTimeout: Room.CLOSE_ROOM_TIMEOUT_MILLISECONDS,
+      });
+      this.closeRoomTimeoutId = setTimeout(
+        () => this.server.closeRoom(this),
+        Room.CLOSE_ROOM_TIMEOUT_MILLISECONDS,
+      );
     } else {
       // There are other players, broadcast the info to them
       this.broadcastInfoUpdate();
