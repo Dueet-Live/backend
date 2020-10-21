@@ -36,6 +36,11 @@ export class GameServer {
     });
   }
 
+  closeRoom(room: Room): void {
+    this.logger.info('close room', { roomId: room.id });
+    delete this.rooms[room.id];
+  }
+
   private handleCreateRoom(socket: io.Socket): void {
     const roomId = this.generateRoomId();
     if (roomId === null) {
@@ -45,7 +50,7 @@ export class GameServer {
       });
       return;
     }
-    const room = new Room(roomId, this.logger);
+    const room = new Room(this, roomId, this.logger);
     this.rooms[room.id] = room;
     const player = room.createPlayer(socket);
     const response: RoomCreatedResponse = {

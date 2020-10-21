@@ -11,6 +11,7 @@ import {
   START_GAME_NOTIFICATION,
 } from './messages';
 import { Player, PlayerInfo } from './player';
+import { GameServer } from './server';
 
 export type RoomInfo = {
   id: string;
@@ -22,6 +23,7 @@ export class Room {
   readonly id: string;
   piece?: number;
   players: { [id: number]: Player } = {};
+  private server: GameServer;
   private get allPlayers(): Player[] {
     return Object.values(this.players);
   }
@@ -31,8 +33,9 @@ export class Room {
   private static readonly PLAYER_ID_UPPER_BOUND = 9;
   private static readonly MAX_NUM_PLAYERS = 2;
 
-  constructor(id: string, logger: Logger) {
+  constructor(server: GameServer, id: string, logger: Logger) {
     this.id = id;
+    this.server = server;
     this.logger = logger.child({ roomId: id });
   }
 
@@ -98,7 +101,13 @@ export class Room {
 
   playerDidDisconnect(player: Player): void {
     delete this.players[player.id];
-    this.broadcastInfoUpdate();
+    if (this.allPlayers.length === 0) {
+      // Last player, close room
+      this.server.closeRoom(this);
+    } else {
+      // There are other players, broadcast the info to them
+      this.broadcastInfoUpdate();
+    }
   }
 
   notePlayed(playingPlayer: Player, message: unknown): void {
