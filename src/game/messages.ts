@@ -1,5 +1,6 @@
 import * as yup from 'yup';
 import { RoomInfo } from './room';
+import { GameServer } from './server';
 
 /*************** Create room ***************/
 
@@ -23,7 +24,7 @@ export const joinRoomRequestSchema = yup
   .object()
   .defined()
   .shape({
-    roomId: yup.string().defined().length(6),
+    roomId: yup.string().defined().length(GameServer.ROOM_ID_LENGTH),
   });
 
 export type JoinRoomRequest = yup.InferType<typeof joinRoomRequestSchema>;

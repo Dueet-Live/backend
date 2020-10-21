@@ -20,6 +20,9 @@ export class GameServer {
   private logger: Logger;
 
   private static readonly ROOM_ID_GEN_MAX_TRIES: number = 10000;
+  static readonly MAX_ROOM_NUMBER: number = 9999;
+  static readonly ROOM_ID_LENGTH: number = GameServer.MAX_ROOM_NUMBER.toString()
+    .length;
 
   constructor(ioServer: io.Server, logger: Logger) {
     this.ioServer = ioServer;
@@ -73,8 +76,10 @@ export class GameServer {
 
   private generateRoomId(maxTries: number): string | null {
     for (let i = 0; i < maxTries; i++) {
-      const randomNum = getRandomIntInclusive(1, 999999);
-      const candidateId = randomNum.toString().padStart(6, '0');
+      const randomNum = getRandomIntInclusive(1, GameServer.MAX_ROOM_NUMBER);
+      const candidateId = randomNum
+        .toString()
+        .padStart(GameServer.ROOM_ID_LENGTH, '0');
       if (!this.rooms[candidateId]) {
         return candidateId;
       }
