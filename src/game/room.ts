@@ -2,6 +2,7 @@ import io from 'socket.io';
 import { Logger } from 'winston';
 import { getRandomIntInclusive } from '../utils/random';
 import {
+  joinRoomFailures,
   JoinRoomResponse,
   JOIN_ROOM_RESPONSE,
   NOTE_PLAYED,
@@ -28,6 +29,7 @@ export class Room {
 
   private static readonly PLAYER_ID_LOWER_BOUND = 0;
   private static readonly PLAYER_ID_UPPER_BOUND = 9;
+  private static readonly MAX_NUM_PLAYERS = 2;
 
   constructor(id: string, logger: Logger) {
     this.id = id;
@@ -44,6 +46,18 @@ export class Room {
 
   joinRoom(socket: io.Socket): void {
     this.logger.info('join room', { socketId: socket.id });
+
+    // If room is full, reject request
+    if (this.allPlayers.length >= Room.MAX_NUM_PLAYERS) {
+      const joinRoomResponse: JoinRoomResponse = {
+        success: false,
+        ...joinRoomFailures.roomFull,
+      };
+      socket.emit(JOIN_ROOM_RESPONSE, joinRoomResponse);
+      return;
+    }
+
+    // Create the player and send response
     const player = this.createPlayer(socket);
     const info = this.getInfo();
     // Send a response to the joining player
@@ -106,7 +120,6 @@ export class Room {
   }
 
   private generateNextPlayerId(): number {
-    // TODO: handle too many players
     while (true) {
       const newId = getRandomIntInclusive(
         Room.PLAYER_ID_LOWER_BOUND,
