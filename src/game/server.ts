@@ -9,7 +9,9 @@ import {
   JoinRoomResponse,
   JOIN_ROOM_REQUEST,
   JOIN_ROOM_RESPONSE,
+  MAX_ROOM_ID,
   RoomCreatedResponse,
+  ROOM_ID_LENGTH,
 } from './messages';
 import { Room } from './room';
 import { validateSocketRequest } from './utils/validateSocketRequest';
@@ -19,10 +21,7 @@ export class GameServer {
   private rooms: { [roomId: string]: Room } = {};
   private logger: Logger;
 
-  private static readonly ROOM_ID_GEN_MAX_TRIES: number = 10000;
-  static readonly MAX_ROOM_NUMBER: number = 9999;
-  static readonly ROOM_ID_LENGTH: number = GameServer.MAX_ROOM_NUMBER.toString()
-    .length;
+  private static readonly ROOM_ID_GEN_MAX_TRIES = MAX_ROOM_ID * 2;
 
   constructor(ioServer: io.Server, logger: Logger) {
     this.ioServer = ioServer;
@@ -76,10 +75,8 @@ export class GameServer {
 
   private generateRoomId(maxTries: number): string | null {
     for (let i = 0; i < maxTries; i++) {
-      const randomNum = getRandomIntInclusive(1, GameServer.MAX_ROOM_NUMBER);
-      const candidateId = randomNum
-        .toString()
-        .padStart(GameServer.ROOM_ID_LENGTH, '0');
+      const randomNum = getRandomIntInclusive(1, MAX_ROOM_ID);
+      const candidateId = randomNum.toString().padStart(ROOM_ID_LENGTH, '0');
       if (!this.rooms[candidateId]) {
         return candidateId;
       }
