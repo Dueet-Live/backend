@@ -124,6 +124,9 @@ export class Room {
       this.allPlayers.forEach((player) =>
         player.send(START_GAME_NOTIFICATION, startMessage),
       );
+
+      // Mark all players as not ready in preparation for the next game
+      this.allPlayers.forEach((player) => (player.ready = false));
     }
   }
 
