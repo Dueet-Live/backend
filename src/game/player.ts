@@ -110,13 +110,13 @@ export class Player {
 
   private handleNotePlayed(message: unknown): void {
     // TODO: will validation affect performance?
-    this.logger.info('player played note', { message });
+    this.logger.debug('player played note', { message });
     this.room.notePlayed(this, message);
   }
 
   private handleDisconnect(reason: string): void {
     // TODO: need to distinguish between different reasons?
-    this.logger.debug('player disconnected', { reason });
+    this.logger.info('player disconnected', { reason });
     this.room.playerDidDisconnect(this);
   }
 

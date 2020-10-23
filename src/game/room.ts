@@ -139,7 +139,11 @@ export class Room {
         Room.CLOSE_ROOM_TIMEOUT_MILLISECONDS,
       );
     } else {
-      // There are other players, broadcast the info to them
+      // There are other players
+      // First, make the rest not ready
+      this.logger.info('player left, mark the other player(s) not ready');
+      this.allPlayers.forEach((player) => (player.ready = false));
+      // Then, broadcast the update
       this.broadcastInfoUpdate();
     }
   }
