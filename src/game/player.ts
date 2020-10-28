@@ -1,6 +1,8 @@
 import io from 'socket.io';
 import { Logger } from 'winston';
 import {
+  changeSpeedRequestSchema,
+  CHANGE_SPEED_REQUEST,
   choosePartRequestSchema,
   choosePieceRequestSchema,
   CHOOSE_PART_REQUEST,
@@ -40,6 +42,9 @@ export class Player {
     this.socket.on(CHOOSE_PIECE_REQUEST, (message: unknown) =>
       this.handleChoosePiece(message),
     );
+    this.socket.on(CHANGE_SPEED_REQUEST, (message: unknown) =>
+      this.handleChangeSpeed(message),
+    );
     this.socket.on(CHOOSE_PART_REQUEST, (message: unknown) =>
       this.handleChoosePart(message),
     );
@@ -70,6 +75,22 @@ export class Player {
     this.logger.info('player chose piece', { id: choosePieceRequest.id });
 
     this.room.playerDidChoosePiece(choosePieceRequest.id);
+  }
+
+  private handleChangeSpeed(message: unknown): void {
+    const changeSpeedRequest = validateSocketRequest(
+      changeSpeedRequestSchema,
+      message,
+      this.socket,
+    );
+    if (changeSpeedRequest === null) {
+      return;
+    }
+    this.logger.info('player changed speed', {
+      speed: changeSpeedRequest.speed,
+    });
+
+    this.room.playerDidChangeSpeed(changeSpeedRequest.speed);
   }
 
   private handleChoosePart(message: unknown): void {

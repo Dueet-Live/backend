@@ -72,6 +72,15 @@ export const choosePieceRequestSchema = yup.object().defined().shape({
 });
 export type ChoosePieceRequest = yup.InferType<typeof choosePieceRequestSchema>;
 
+/****************** Change speed **********************/
+
+// Request
+export const CHANGE_SPEED_REQUEST = 'changeSpeedRequest';
+export const changeSpeedRequestSchema = yup.object().defined().shape({
+  speed: yup.number().required(),
+});
+export type ChangeSpeedRequest = yup.InferType<typeof changeSpeedRequestSchema>;
+
 /****************** Choose part **********************/
 
 // Request

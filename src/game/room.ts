@@ -16,12 +16,14 @@ import { GameServer } from './server';
 export type RoomInfo = {
   id: string;
   piece?: number;
+  speed: number;
   players: PlayerInfo[];
 };
 
 export class Room {
   readonly id: string;
   piece?: number;
+  speed = 1;
   players: { [id: number]: Player } = {};
   private server: GameServer;
   private get allPlayers(): Player[] {
@@ -108,6 +110,12 @@ export class Room {
     this.broadcastInfoUpdate();
   }
 
+  playerDidChangeSpeed(speed: number): void {
+    // TODO: validation
+    this.speed = speed;
+    this.broadcastInfoUpdate();
+  }
+
   playerDidChoosePart(): void {
     // TODO: validation
     this.broadcastInfoUpdate();
@@ -187,6 +195,7 @@ export class Room {
       id: this.id,
       players: this.allPlayers.map((p) => p.getInfo()),
       piece: this.piece,
+      speed: this.speed,
     };
   }
 }
