@@ -168,11 +168,14 @@ export class Room {
   }
 
   private broadcastInfoUpdate(...except: number[]): void {
-    const info = this.getInfo();
-    this.logger.info('broadcast info update', { except, info });
+    const roomInfo = this.getInfo();
+    this.logger.info('broadcast info update', { except, info: roomInfo });
     this.allPlayers.forEach((player) => {
       if (!except.includes(player.id)) {
-        player.send(ROOM_INFO_UPDATED_NOTIFICATION, info);
+        player.send(ROOM_INFO_UPDATED_NOTIFICATION, {
+          roomInfo,
+          playerId: player.id,
+        });
       }
     });
   }
