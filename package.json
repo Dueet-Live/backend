@@ -10,7 +10,10 @@
     "lint": "prettier --check src; eslint src",
     "fix": "prettier --write src; eslint src --fix",
     "dev": "nodemon --watch src --ext ts --exec \"npm run clean && npm run build && npm run serve\"",
-    "seed": "node dist/db/seeds/seed.js"
+    "db:drop": "typeorm schema:drop",
+    "db:sync": "typeorm schema:sync",
+    "seed": "node dist/db/seeds/seed.js",
+    "reseed": "npm run db:drop && npm run db:sync && npm run seed"
   },
   "dependencies": {
     "@types/cors": "^2.8.8",
