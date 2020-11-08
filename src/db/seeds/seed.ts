@@ -66,6 +66,13 @@ const createGenre = async (name: string): Promise<Genre> => {
   await saveSong('O Christmas Tree', 'oChristmasTree', 'duet', christmasGenre);
 
   await saveSong(
+    'A Holly Jolly Christmas',
+    'aHollyJollyChristmas',
+    'solo',
+    christmasGenre,
+  );
+  await saveSong('First Noel', 'firstNoel', 'solo', christmasGenre);
+  await saveSong(
     'Winter Wonderland',
     'winterWonderland',
     'solo',
