@@ -5,9 +5,13 @@ import https from 'https';
 import 'reflect-metadata';
 import io from 'socket.io';
 import { GameServer } from './game/server';
-import { logger } from './logger/logger';
+import { createLogger } from './logger/logger';
 
 (async () => {
+  // Create logger
+  const logger = createLogger('ws');
+  logger.info('loaded environment variables');
+
   // Load config
   dotenv.config();
   logger.info('loaded environment variables');

@@ -4,13 +4,16 @@ import http from 'http';
 import https from 'https';
 import 'reflect-metadata';
 import { createConnection } from 'typeorm';
-import { logger } from './logger/logger';
-import { app } from './resources/app';
+import { createLogger } from './logger/logger';
+import { createResourceServer } from './resources/app';
 
 (async () => {
+  // Create logger
+  const logger = createLogger('rest');
+  logger.info('loaded environment variables');
+
   // Load config
   dotenv.config();
-  logger.info('loaded environment variables');
 
   // Connect to database
   try {
@@ -27,6 +30,7 @@ import { app } from './resources/app';
   const key = process.env.KEY || './key.pem';
   const cert = process.env.CERT || './cert.pem';
 
+  const resourceServer = createResourceServer(logger);
   let httpServer: https.Server | http.Server;
   if (environment === 'production') {
     httpServer = https.createServer(
@@ -34,10 +38,10 @@ import { app } from './resources/app';
         key: fs.readFileSync(key),
         cert: fs.readFileSync(cert),
       },
-      app,
+      resourceServer,
     );
   } else {
-    httpServer = http.createServer(app);
+    httpServer = http.createServer(resourceServer);
   }
 
   httpServer.listen(port, () => {
