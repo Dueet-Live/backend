@@ -70,12 +70,7 @@ const createGenre = async (name: string): Promise<Genre> => {
     'duet',
     christmasGenre,
   );
-  await saveSong(
-    'Deck of Halls',
-    'deckOfHalls',
-    'duet',
-    christmasGenre,
-  );
+  await saveSong('Deck of Halls', 'deckOfHalls', 'duet', christmasGenre);
 
   await saveSong(
     'A Holly Jolly Christmas',
