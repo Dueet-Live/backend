@@ -1,8 +1,12 @@
 # Dueet-Live Backend
 
+<p align="center">
+  <img src="/docs/logo.jpg" alt="Dueet Live Logo"/
+</p>
+
 The backend of Dueet-Live!
 
-## Developement Setup
+## Development Setup
 
 ### Clone the repository
 
