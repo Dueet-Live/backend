@@ -8,22 +8,21 @@ The backend of Dueet-Live!
 
 ## Development Setup
 
-### Clone the repository
-
-```bash
-git clone git@github.com:Dueet-Live/backend.git
-```
-
 ### Install dependencies
 
 ```bash
-cd backend
 npm install
 ```
 
 ### Start Postgres server
 
 Start the Postgres server and create a database called `dueet-live` (or any name you like).
+
+Sample SQL command:
+
+```sql
+CREATE DATABASE "dueet-live";
+```
 
 ### Configure the environment variables
 
@@ -41,6 +40,7 @@ Remember to use the database name that you created in the previous step.
 Seed the database with initial songs and genres by running
 
 ```bash
+npm run build
 npm run seed
 ```
 
