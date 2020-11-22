@@ -42,29 +42,39 @@ npm run seed
 
 ### Build and run the project
 
+Run the following 3 commands in 3 different terminal windows.
+
 ```bash
-npm run dev
+npm run watch:build
+npm run watch:rest
+npm run watch:ws
 ```
 
-This will let `nodemon` observe file changes and automatically recompile the server as you modify the files (live reload).
+This will let `nodemon` observe file changes and automatically recompile the server as you modify the files.
 
-You might also be interested in other `npm` scripts. Take a look at `package.json`.
-
-### (Optional) Manipulating the database
+### Manipulating the database
 
 To drop the database, run
 
 ```bash
-npx typeorm schema:drop
+npm run db:drop
 ```
 
 To synchronise the database schema with the entities in the source code, run
 
 ```bash
-npx typeorm schema:sync
+npm run db:sync
 ```
 
 Remember to re-seed after you re-create the database.
+
+To drop, sync, and then reseed the database, run
+
+```bash
+npm run reseed
+```
+
+You might also be interested in other `npm` scripts. Take a look at `package.json`.
 
 ### Caveats
 
